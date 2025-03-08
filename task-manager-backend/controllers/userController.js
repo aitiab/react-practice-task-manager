@@ -1,7 +1,25 @@
 // jsonwebtoken => pkg for create and use JWT for auth and authorisation
 const jwt = require('jsonwebtoken');
+const bcrypt = require('bcryptjs')
 
 const User = require('../db/models/User');
+
+exports.signup = async (req, res) => {
+    const { username, password } = req.body;
+
+    try {
+        if (await User.query().where('username', username).first()) {
+            return res.status(400).json({message: 'User already exists'});
+        }
+
+        const newUser = await User.query().insert({username, password});
+        return res.status(201).json({message: 'User successfully created'});
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ message: error.message });
+    }
+}
+
 
 // auth
 exports.login = async (req, res) => {
@@ -15,8 +33,9 @@ exports.login = async (req, res) => {
         // returns QueryBuilder instance is found otherwise empty array hence user[0] would be undefined???
         const user = await User.query().where('username', username).first();    
 
-        if (!user || !(await bcrypt.compare(password, user[0].password))) {
+        if (!user || !(await bcrypt.compare(password, user.password))) {
             // return with response code 400 status code and message
+            console.log('issue')
             return res.status(400).json({ message: 'Invalid Credentials' });
         }
 

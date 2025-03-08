@@ -73,8 +73,8 @@ class User extends Model {
             required: ['username', 'password'], // fields required when inserting
             properties: {
                 id: { type: 'integer' }, // Primary key
-                username: { type: 'string', minlength: 3, maxLength: 255},
-                password: { type: 'string', minlength: 6 },
+                username: { type: 'string' },
+                password: { type: 'string' },
                 isActive: { type: 'boolean', default: true },
                 createdAt: { type: 'string', format: 'date-time' },
                 updatedAt: { type: 'string', format: 'date-time' },

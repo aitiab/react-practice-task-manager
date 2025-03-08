@@ -1,6 +1,6 @@
 // useState hook lets add state. store data
 import axios from "axios";
-import { useState } from "react";
+import { act, useState } from "react";
 import { useNavigate } from 'react-router-dom';
 
 // functional component using useState to manage state of form fields
@@ -15,14 +15,15 @@ const LoginPage = () => {
     const navigate = useNavigate();  // Hook for redirecting after login
 
     // function to handle form submission
-    const handleSubmit = async (event) => {
+    const handleSubmit = async (event, actionType) => {
         // Prevent default behaviour of reloading when submit
         event.preventDefault();
-        console.log('Login submitted: ', { username, password})
+        console.log('Login submitted: ', { username, password, actionType})
 
         try {
             // Make post request to backend to authenticate
-            const response = await axios.post('http://localhost:5000/user/login', {
+            const url = actionType === 'login' ? 'http://localhost:5000/user/login' : 'http://localhost:5000/user/signup'; 
+            const response = await axios.post(url, {
                 username,
                 password,
             });
@@ -38,11 +39,12 @@ const LoginPage = () => {
     }; 
     
     // Controlled component as React controls the input value
+    //<form onSubmit={handleSubmit}>
     return (
         <div className="login-container">
             <h2>Login</h2>
             {error && <p style={{color: 'red' }}>{error}</p>}
-            <form onSubmit={handleSubmit}>
+            <form>
                 <div>
                     <label>Username:</label>
                     <input
@@ -62,7 +64,15 @@ const LoginPage = () => {
                     />
                 </div>
                 <div>
-                    <button type="submit">Login</button>
+                    <button
+                        type="submit"
+                        onClick={(e) => handleSubmit(e, 'login')}
+                    >Login</button>
+                    
+                    <button 
+                        type="submit"
+                        onClick={(e) => handleSubmit(e, 'signup')}
+                    >Sign Up</button>
                 </div>
             </form>
         </div>
