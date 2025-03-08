@@ -2,6 +2,7 @@ import React from 'react';
 
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 
+import TaskManagementPage from './TaskManagementPage/TaskManagementPage';
 import LoginPage from './LoginPage'
 import './App.css'
 
@@ -15,7 +16,7 @@ function App() {
       <div className="App">
         <Routes>
           <Route path='/login' element={<LoginPage />} />
-          <Route path='/dashboard' element={<Dash />} />
+          <Route path='/dashboard' element={<TaskManagementPage />} />
         </Routes>
       </div>
     </Router>

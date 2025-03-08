@@ -40,6 +40,8 @@ const LoginPage = () => {
     
     // Controlled component as React controls the input value
     //<form onSubmit={handleSubmit}>
+
+    // issue below -> the loginType is being retrieved from site instead of react (not a controlled component)?
     return (
         <div className="login-container">
             <h2>Login</h2>
