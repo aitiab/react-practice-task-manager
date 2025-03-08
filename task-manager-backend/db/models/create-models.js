@@ -1,6 +1,6 @@
 // knex and objectionjs create db file but not the tables automatically
 // better to use migration. TBD: MIgration
-const knex = require('../knex');
+const knexInstance = require('../knex');
 
 //create users table
 
@@ -15,20 +15,26 @@ const knex = require('../knex');
         );
 */
 
-knex.schema.createTableIfNotExists('users', (table) => {
-    table.increments('id').primary(); // Auto-increment primary key
-    table.string('username').unique().notNullable(); // unique, not nullable 
-    table.string('password').unique().notNullable(); // unique, not nullable + needs to include minlength
-    table.boolean('isActive').defaultTo(true);
-    table.string('createdAt'); // should it be .timestamp() ?
-    table.string('updatedAt');
-})
-    .then(() => {
-        console.log('Users table created or already exists');
-    })
-    .catch((err) => {
-        console.error('Error creating table:', err);
-    });
+knexInstance.schema.hasTable('users').then( async (exists) => {
+    if (!exists) {
+        await knexInstance.schema.createTable('users', (table) => {
+            table.increments('id').primary(); // Auto-increment primary key
+            table.string('username').unique().notNullable(); // unique, not nullable 
+            table.string('password').unique().notNullable(); // unique, not nullable + needs to include minlength
+            table.boolean('isActive').defaultTo(true);
+            table.string('createdAt'); // should it be .timestamp() ?
+            table.string('updatedAt');
+        })
+            .then(() => {
+                console.log('Users table created or already exists');
+            })
+            .catch((err) => {
+                console.error('Error creating table:', err);
+            });
+    }
+});
+
+
 
 /* desired table
         CREATE TABLE users (
@@ -41,17 +47,22 @@ knex.schema.createTableIfNotExists('users', (table) => {
         );
 */
 
-knex.schema.createTableIfNotExists('tasks', (table) => {
-    table.increments('id').primary(); // Auto-increment primary key
-    table.string('title').notNullable(); // not nullable 
-    table.string('desc'); //
-    table.boolean('isCompleted').defaultTo(false);
-    table.string('createdAt'); // should it be .timestamp() ?
-    table.string('updatedAt');
-})
-    .then(() => {
-        console.log('Tasks table created or already exists');
-    })
-    .catch((err) => {
-        console.error('Error creating table:', err);
-    });
+knexInstance.schema.hasTable('tasks').then( async (exists) => {
+    if (!exists) {
+        await knexInstance.schema.createTable('tasks', (table) => {
+            table.increments('id').primary(); // Auto-increment primary key
+            table.string('title').notNullable(); // not nullable 
+            table.string('desc'); //
+            table.boolean('isCompleted').defaultTo(false);
+            table.string('createdAt'); // should it be .timestamp() ?
+            table.string('updatedAt');
+        })
+            .then(() => {
+                console.log('Tasks table created or already exists');
+            })
+            .catch((err) => {
+                console.error('Error creating table:', err);
+            });
+    }
+});
+

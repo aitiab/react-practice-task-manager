@@ -6,7 +6,7 @@ const knex = require('knex'); // Import/load knex.js library
 const knexInstance = knex ({
     client: 'sqlite3', // Specifies the database client to use
     connection: { // specify how to connect to SQLite DB
-        filename: './database.db', // Path to database file
+        filename: './db/database.sqlite', // Path to database file
     },
     useNullAsDefault: true, // A config needed for SQLite3 due to way it handles null values
 });
