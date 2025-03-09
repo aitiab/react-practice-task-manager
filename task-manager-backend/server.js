@@ -3,6 +3,7 @@ const express = require('express');
 
 const cors = require('cors');
 const userRoutes = require('./routes/userRoutes')
+const taskRoutes = require('./routes/taskRoutes')
 /*
 It provides features like defining models, 
 managing database connections, and performing CRUD (Create, Read, Update, Delete) operations.
@@ -24,6 +25,7 @@ app.use(express.json()); // Middleware for parsing JSON requests -> js object
 // tells express app to use middleware func for incoming reqs to certain path (base path '/user)
 // userRoutes uses express.Router
 app.use('/user', userRoutes)
+app.use('/tasks', taskRoutes)
 
 
 // // mongoose.connect(<MONGODB URL>, {OPTIONS FOR CONNECTION}) connect to MongoDB 

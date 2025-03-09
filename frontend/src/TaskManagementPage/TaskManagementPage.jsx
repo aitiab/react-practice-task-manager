@@ -18,7 +18,7 @@ const TaskManagementPage = () => {
 
 
     // Function to fetch tasks from backend
-    const url = 'http://localhost:5000/api/tasks';
+    const url = 'http://localhost:5000/tasks/';
     const fetchTasks = async () => {
         try {
             // get user's token for verifying authenticatoin
@@ -33,6 +33,7 @@ const TaskManagementPage = () => {
                 },
             });
             setTasks(response.data)
+            console.log(tasks);
         } catch(err) {
             setError('Error fetching tasks')
         }
@@ -74,8 +75,8 @@ const TaskManagementPage = () => {
 
         // Update complete status in backend
         try {
-            const response = await axios.put(`${url}/${taskId}`, 
-                { completed: true},
+            const response = await axios.put(`${url}${taskId}`, 
+                {},
                 { headers: { Authorization: `Bearer ${token}`}}
             );
 
@@ -90,7 +91,7 @@ const TaskManagementPage = () => {
         event.preventDefault();
 
         try {
-            const response = await axios.delete(`${url}/${taskId}`,
+            const response = await axios.delete(`${url}${taskId}`,
                 { headers: { Authorization: `Bearer ${localStorage.authToken}`}} // Probs should not repeat localStorage...
             );
             // Update new list of tasks
