@@ -6,11 +6,10 @@ require('dotenv').config();
 
 // Lets get the model for task
 const Task = require('../db/models/Task');
-const { Query } = require('mongoose');
 
 
 exports.getTasks = async (req, res) => {
-    const token = req.header('Authorization').replace('Bearer ', '');
+    const token = req.header('Authorization')?.replace('Bearer ', '');
 
     if (!token) return res.status(401).json({message: "No token provided"});
 
@@ -19,7 +18,7 @@ exports.getTasks = async (req, res) => {
 
         const tasks = await Task.query(); // Grab whole list
 
-        res.json({Tasks: tasks, message:'Successfully GET Tasks'});
+        res.json({tasks: tasks, message:'Successfully GET Tasks'});
     } catch (err) {
         console.error(err);
         return res.status(401).json({message: err.message});
@@ -28,7 +27,7 @@ exports.getTasks = async (req, res) => {
 
 exports.createTask = async (req, res) => {
     // Check proper authorisation then doing processing of creation
-    const token = req.header('Authorization').replace('Bearer ', '');
+    const token = req.header('Authorization')?.replace('Bearer ', '');
     if (!token) return res.status(401).json({message: "No token provided"});
 
 
@@ -47,7 +46,7 @@ exports.createTask = async (req, res) => {
 
 exports.completeTask = async (req, res) => {
     // first lets if they have token
-    const token = req.header('Authorization').replace('Bearer ', ''); // Maybe these two statments should be func.DRY
+    const token = req.header('Authorization')?.replace('Bearer ', ''); // Maybe these two statments should be func.DRY
     if (!token) return res.status(401).json({messsage: 'No token provided'});
 
     try {
@@ -55,13 +54,31 @@ exports.completeTask = async (req, res) => {
         jwt.verify(token, process.env.JWT_SECRET); // returns error if fails
         
         const { id } = req.params;
-        
         const updatedTask = await Task.query().findById(id).patch({
             isCompleted: true
         });
-        return res.status(201).json({message: 'Task successfully updated'});
+        return res.status(200).json({message: 'Task successfully updated'});
 
     } catch (err) {
+        console.error(err);
+        return res.status(500).json(err.message);
+    }
+};
+
+exports.deleteTask = async (req, res) => {
+    const token = req.header('Authorization')?.replace('Bearer ', '');
+    if (!token) return res.status(401).json({message: 'No token provided'});
+
+
+    try {
+        // auth. returns error if failed
+        jwt.verify(token, process.env.JWT_SECRET);
+
+        const { id } = req.params;
+        const deletedTask = await Task.query().deleteById(id);
+
+        return res.status(200).json({message: 'Task successfully deleted'});
+    } catch (error) {
         console.error(err);
         return res.status(500).json(err.message);
     }

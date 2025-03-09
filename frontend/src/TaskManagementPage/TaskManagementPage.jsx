@@ -18,7 +18,7 @@ const TaskManagementPage = () => {
 
 
     // Function to fetch tasks from backend
-    const url = 'http://localhost:5000/tasks/';
+    const url = 'http://localhost:5000/tasks';
     const fetchTasks = async () => {
         try {
             // get user's token for verifying authenticatoin
@@ -32,7 +32,7 @@ const TaskManagementPage = () => {
                     Authorization: `Bearer ${token}`
                 },
             });
-            setTasks(response.data)
+            setTasks(response.data.tasks)
             console.log(tasks);
         } catch(err) {
             setError('Error fetching tasks')
@@ -72,13 +72,14 @@ const TaskManagementPage = () => {
     // Handle marking a task as complete
     const handleCompleteTask = async (event, taskId) => {
         event.preventDefault();
-
         // Update complete status in backend
         try {
-            const response = await axios.put(`${url}${taskId}`, 
-                {},
+            const token = localStorage.authToken;
+            const response = await axios.put(`${url}/${taskId}`,
+                { isCompleted: true },
                 { headers: { Authorization: `Bearer ${token}`}}
             );
+            console.log(response);
 
             fetchTasks();
         } catch (err) {
@@ -91,7 +92,7 @@ const TaskManagementPage = () => {
         event.preventDefault();
 
         try {
-            const response = await axios.delete(`${url}${taskId}`,
+            const response = await axios.delete(`${url}/${taskId}`,
                 { headers: { Authorization: `Bearer ${localStorage.authToken}`}} // Probs should not repeat localStorage...
             );
             // Update new list of tasks
@@ -127,18 +128,19 @@ const TaskManagementPage = () => {
             </form>
 
             <ul>
-                {tasks.map((task) => {
-                    <il key={task.id}>
+                
+                {Array.isArray(tasks) && tasks.map((task) => (
+                    <li key={task.id}>
                         <p>{task.title}</p>
                         <p>{task.desc}</p>
-                        <button onClick={(e) => handleCompleteTask(task.id)}>
+                        <button onClick={(e) => handleCompleteTask(e, task.id)}>
                             {task.completed ? 'Completed' : 'Mark as complete'}
                         </button>
-                        <button onClick={(e) => handleDeleteTask(task.id)}>
+                        <button onClick={(e) => handleDeleteTask(e, task.id)}>
                             Delete
                         </button>
-                    </il>
-                })}
+                    </li>
+                ))}
             </ul>
         </div>
     );
